@@ -1,19 +1,29 @@
-import { ConfigService } from '@nestjs/config';
+import { LogLevel } from '@nestjs/common/services/logger.service';
+import { ConfigService, ConfigType } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
-import { PORT } from './common/constants';
+import { AppConfigFactory } from './configs/app-config.factory';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const port = app.get(ConfigService).get(PORT);
+  const appConfig: ConfigType<typeof AppConfigFactory> = app
+    .get(ConfigService)
+    .get('app');
 
-  app.useLogger(['log', 'warn', 'error', 'debug', 'verbose']);
+  const loggerLevels: LogLevel[] =
+    appConfig.isProd === true
+      ? ['log', 'warn', 'error']
+      : ['log', 'warn', 'error', 'debug', 'verbose'];
+  app.useLogger(loggerLevels);
 
-  await app.listen(port);
+  app.enableCors({
+    origin: true,
+  });
+  await app.listen(appConfig.port);
 
-  console.log(`SJDiary Server Start. Port: ${port}`);
+  console.log(`SJDiary Server Start. Port: ${appConfig.port}`);
 }
 
 bootstrap();

@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  # NestJS App
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile-local
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - network-front
+      - network-back
+    command: npm run serve:api
+
+  # React App
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./apps/front/Dockerfile-local
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - network-front
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run serve:front
+
+  # Database - Mysql
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=local
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+    volumes:
+      - ./ignore/mysql/data:/var/lib/mysql
+    networks:
+      - network-back
+
+networks:
+  network-front:
+    driver: bridge
+  network-back:
+    driver: bridge

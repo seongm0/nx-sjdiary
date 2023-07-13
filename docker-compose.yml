@@ -46,7 +46,7 @@ services:
       - "3306:3306"
       - "33060:33060"
     volumes:
-      - ./ignore/mysql/data:/var/lib/mysql
+      - ./ignored/mysql/data:/var/lib/mysql
     networks:
       - network-back
 

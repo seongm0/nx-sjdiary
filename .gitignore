@@ -40,3 +40,9 @@ Thumbs.db
 
 # etc
 /ignored
+
+# graphql
+schema.gql
+
+# env
+/**/.env*

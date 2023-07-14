@@ -1,35 +1,34 @@
-import axios from 'axios';
-export function App() {
-  const click = async () => {
-    const url = 'http://localhost:8000';
-    fetch(url)
-      .then(async (res) => {
-        console.log('Hello');
-        console.log(res);
-        const data = await res.json();
-        console.log(data);
-      })
-      .catch((e) => {
-        console.log('??');
-        console.log(e);
-      });
+import { BrowserRouter } from 'react-router-dom';
+import styled from 'styled-components';
 
-    try {
-    const { data } = await axios.get(url);
-    console.log(data);
+import { REACT_APP_MODE } from '../config';
+import { MainRouter } from '../mainRouter';
+import { GlobalStyle } from '../styles/globalStyles';
 
-    } catch (e) {
-      console.log('!!');
-      console.log(e);
-    }
-  };
+import { AppDebug } from './AppDebug';
 
+const AppWrapper = styled.div`
+  width: 60%;
+  max-width: 861px;
+  height: 100vh;
+
+  display: flex;
+
+  background-color: ${({ theme }) => theme.colors.purple4};
+`;
+
+const App = () => {
   return (
-    <div>
-      <div>2</div>
-      <button onClick={click}>Hello</button>
-    </div>
+    <>
+      <AppWrapper>
+        <BrowserRouter>
+          <GlobalStyle />
+          <MainRouter />
+        </BrowserRouter>
+      </AppWrapper>
+      {REACT_APP_MODE === 'local' && <AppDebug />}
+    </>
   );
-}
+};
 
 export default App;

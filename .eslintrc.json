@@ -59,7 +59,19 @@
       {
         "groups": ["builtin", "external", "parent", "sibling", "index"],
         "newlines-between": "always",
-        "alphabetize": { "order": "asc" }
+        "alphabetize": { "order": "asc" },
+        "pathGroups": [
+          {
+            "pattern": "@nestjs",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          }
+        ]
       }
     ]
   }

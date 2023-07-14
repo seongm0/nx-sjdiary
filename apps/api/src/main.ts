@@ -2,7 +2,7 @@ import { LogLevel } from '@nestjs/common/services/logger.service';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
 import { AppConfigFactory } from './configs/app-config.factory';
 
 async function bootstrap() {

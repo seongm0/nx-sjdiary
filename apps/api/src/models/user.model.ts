@@ -1,20 +1,20 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { UserEntity } from './../entities';
+import { UserEntity } from '../entities';
 
 @ObjectType()
 export class UserModel {
   @Field(() => ID)
-  id: number;
+  id!: number;
 
   @Field(() => String)
-  email: string;
+  email!: string;
 
   @Field(() => String)
-  name: string;
+  name!: string;
 
   @Field(() => String)
-  profileImageUrl: string;
+  profileImageUrl!: string;
 
   constructor(userEntity: UserEntity) {
     this.id = userEntity.id;

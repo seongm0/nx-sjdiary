@@ -1,14 +1,14 @@
 import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
 
-import { ReviewEntity } from './../entities';
+import { ReviewEntity } from '../entities';
 
 @ObjectType()
 export class ReviewModel {
   @Field(() => ID)
-  id: number;
+  id!: number;
 
   @Field(() => String)
-  content: string;
+  content!: string;
 
   @Field(() => Float, { nullable: true })
   startedAt?: number;
@@ -19,11 +19,7 @@ export class ReviewModel {
   constructor(review: ReviewEntity) {
     this.id = review.id;
     this.content = review.content;
-    this.startedAt = review.startedAt
-      ? new Date(review.startedAt).getTime()
-      : undefined;
-    this.finishedAt = review.finishedAt
-      ? new Date(review.finishedAt).getTime()
-      : undefined;
+    this.startedAt = review.startedAt ? +review.startedAt : undefined;
+    this.finishedAt = review.finishedAt ? +review.finishedAt : undefined;
   }
 }

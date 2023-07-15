@@ -24,9 +24,9 @@ export class UsersService {
     return new UserModel(user);
   }
 
-  async createUser(authUser: IAuth0User, input: CreateUserInput) {
+  async createUser({ sub }: IAuth0User, input: CreateUserInput) {
     const user = await this.userRepo.save({
-      auth0Id: authUser.sub,
+      auth0Id: sub,
       ...input,
     });
 

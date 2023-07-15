@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApolloError } from 'apollo-server-express';
+import dayjs from 'dayjs';
 import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { IAuth0User } from '../auth';
 import { ReviewEntity, UserEntity } from '../entities';
+import { ReviewModel } from '../models';
 
-import { ReviewModel } from './../models';
 import {
   CreateReviewInput,
   DeleteReviewInput,
@@ -16,6 +17,7 @@ import {
 
 @Injectable()
 export class ReviewsService {
+  private readonly logger = new Logger(this.constructor.name);
   @InjectRepository(ReviewEntity)
   private readonly reviewRepo: Repository<ReviewEntity>;
   @InjectRepository(UserEntity)
@@ -27,22 +29,26 @@ export class ReviewsService {
   ): Promise<ReviewModel[]> {
     const user = await this.userRepo.findOneBy({ auth0Id: sub });
 
-    const duplicateWheres = {
-      user,
+    this.logger.debug(JSON.stringify(user, null, 2));
+
+    const commonWhere = {
+      user: {
+        id: user.id,
+      },
       deletedAt: IsNull(),
     };
 
     const reviews = await this.reviewRepo.find({
       where: [
         {
-          startedAt: MoreThanOrEqual(new Date(startDate)),
-          finishedAt: LessThanOrEqual(new Date(endDate)),
-          ...duplicateWheres,
+          startedAt: MoreThanOrEqual(dayjs(startDate)),
+          finishedAt: LessThanOrEqual(dayjs(endDate)),
+          ...commonWhere,
         },
         {
           startedAt: IsNull(),
           finishedAt: IsNull(),
-          ...duplicateWheres,
+          ...commonWhere,
         },
       ],
     });
@@ -59,7 +65,9 @@ export class ReviewsService {
     const pendingTimeReviews = await this.reviewRepo.find({
       where: [
         {
-          user,
+          user: {
+            id: user.id,
+          },
           startedAt: IsNull(),
           finishedAt: IsNull(),
           deletedAt: IsNull(),
@@ -92,7 +100,9 @@ export class ReviewsService {
     }
 
     const review = await this.reviewRepo.findOneBy({
-      user,
+      user: {
+        id: user.id,
+      },
       id: input.id,
     });
 
@@ -101,11 +111,11 @@ export class ReviewsService {
     }
 
     if (input.startedAt) {
-      review.startedAt = new Date(input.startedAt);
+      review.startedAt = dayjs(input.startedAt);
     }
 
     if (input.finishedAt) {
-      review.finishedAt = new Date(input.finishedAt);
+      review.finishedAt = dayjs(input.finishedAt);
     }
 
     const updatedReview = await this.reviewRepo.save(review);
@@ -120,7 +130,11 @@ export class ReviewsService {
     try {
       const user = await this.userRepo.findOneBy({ auth0Id: sub });
 
-      await this.reviewRepo.softDelete({ user, id, deletedAt: IsNull() });
+      await this.reviewRepo.softDelete({
+        user: { id: user.id },
+        id,
+        deletedAt: IsNull(),
+      });
 
       return true;
     } catch (err) {

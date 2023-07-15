@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApolloError } from 'apollo-server-express';
+import dayjs from 'dayjs';
 import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { IAuth0User } from '../auth';
@@ -28,7 +29,7 @@ export class TodosService {
     const user = await this.userRepo.findOneBy({ auth0Id: sub });
 
     const duplicateWheres = {
-      user,
+      user: { id: user.id },
       deletedAt: IsNull(),
     };
 
@@ -36,8 +37,8 @@ export class TodosService {
       where: [
         {
           ...duplicateWheres,
-          startedAt: MoreThanOrEqual(new Date(startDate)),
-          finishedAt: LessThanOrEqual(new Date(endDate)),
+          startedAt: MoreThanOrEqual(dayjs(startDate)),
+          finishedAt: LessThanOrEqual(dayjs(endDate)),
         },
         {
           ...duplicateWheres,
@@ -58,7 +59,7 @@ export class TodosService {
 
     const unSetTimeTodos = await this.todoRepo.find({
       where: {
-        user,
+        user: { id: user.id },
         startedAt: IsNull(),
         finishedAt: IsNull(),
         deletedAt: IsNull(),
@@ -90,7 +91,7 @@ export class TodosService {
     }
 
     const todo = await this.todoRepo.findOneBy({
-      user,
+      user: { id: user.id },
       id: input.id,
     });
 
@@ -99,7 +100,7 @@ export class TodosService {
     }
 
     if (input.isCompleted) {
-      todo.completedAt = new Date();
+      todo.completedAt = dayjs();
     } else {
       if (input.isCompleted === false) {
         todo.completedAt = null;
@@ -107,11 +108,11 @@ export class TodosService {
     }
 
     if (input.startedAt) {
-      todo.startedAt = new Date(input.startedAt);
+      todo.startedAt = dayjs(input.startedAt);
     }
 
     if (input.finishedAt) {
-      todo.finishedAt = new Date(input.finishedAt);
+      todo.finishedAt = dayjs(input.finishedAt);
     }
 
     const updatedTodo = await this.todoRepo.save(todo);
@@ -126,7 +127,11 @@ export class TodosService {
     try {
       const user = await this.userRepo.findOneBy({ auth0Id: sub });
 
-      await this.todoRepo.softDelete({ user, id, deletedAt: IsNull() });
+      await this.todoRepo.softDelete({
+        user: { id: user.id },
+        id,
+        deletedAt: IsNull(),
+      });
 
       return true;
     } catch (err) {

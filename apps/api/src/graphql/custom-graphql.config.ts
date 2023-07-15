@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
@@ -19,7 +21,7 @@ export class CustomGraphqlConfig implements GqlOptionsFactory {
 
   createGqlOptions(): ApolloDriverConfig {
     return {
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: path.resolve(__dirname, 'schema.gql'),
       playground: !this.appConfig.isProd,
       sortSchema: true,
       formatError: this.formatError,

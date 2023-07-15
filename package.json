@@ -6,7 +6,10 @@
     "serve:api": "nx run api:serve --host=0.0.0.0",
     "serve:front": "nx run front:serve --host=0.0.0.0",
     "build:api": "nx run api:build",
-    "build:front": "nx run front:build"
+    "build:front": "nx run front:build",
+    "typeorm": "ts-node --project apps/api/tsconfig.app.json ./node_modules/typeorm/cli",
+    "migration:create": "npm run typeorm migration:create apps/api/src/database/migrations/migration -t",
+    "migration:generate": "npm run typeorm migration:generate apps/api/src/database/migrations/migration -- -t -- -d apps/api/src/database/typeorm.config-migrations.ts"
   },
   "private": true,
   "dependencies": {
@@ -26,6 +29,7 @@
     "auth0-js": "^9.21.0",
     "axios": "^1.4.0",
     "bowser": "^2.11.0",
+    "dayjs": "^1.11.9",
     "dotenv": "^16.3.1",
     "graphql": "^16.7.1",
     "history": "^5.3.0",

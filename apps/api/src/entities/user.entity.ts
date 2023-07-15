@@ -1,24 +1,24 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 
-import { ReviewEntity, TodoEntity } from '../entities';
-
 import { CommonEntity } from './common.entity';
+import { ReviewEntity } from './review.entity';
+import { TodoEntity } from './todo.entity';
 
 @Entity({
   name: 'user',
 })
 export class UserEntity extends CommonEntity {
   @Column({ name: 'auth0_id', unique: true })
-  auth0Id: string;
+  auth0Id!: string;
 
   @Column()
-  email: string;
+  email!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ name: 'profile_image_url' })
-  profileImageUrl: string;
+  profileImageUrl!: string;
 
   @OneToMany(() => TodoEntity, (todo) => todo.user)
   todos: TodoEntity[];

@@ -11,9 +11,9 @@ import {
   InjectMysqlConfig,
   MysqlConfigFactory,
 } from '../configs/mysql-config.factory';
-import * as entities from '../entities';
+import { entities } from '../entities';
 
-import * as migrations from './migrations';
+import { migrations } from './migrations';
 
 @Injectable()
 export class MysqlOptions implements TypeOrmOptionsFactory {

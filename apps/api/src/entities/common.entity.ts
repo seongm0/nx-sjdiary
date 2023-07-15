@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { type Dayjs } from 'dayjs';
 import {
   CreateDateColumn,
   DeleteDateColumn,
@@ -6,28 +7,34 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { DatetimeTransformer } from '../common/transformer';
+
 @ObjectType()
 export abstract class CommonEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn({ unsigned: true })
-  id: number;
+  id!: number;
 
   @CreateDateColumn({
     name: 'created_at',
-    type: 'timestamp',
+    type: 'datetime',
+    transformer: DatetimeTransformer,
   })
-  createdAt: Date;
+  createdAt!: Dayjs;
 
   @UpdateDateColumn({
     name: 'updated_at',
-    type: 'timestamp',
+    type: 'datetime',
+    transformer: DatetimeTransformer,
+    nullable: true,
   })
-  updatedAt: Date;
+  updatedAt?: Dayjs;
 
   @DeleteDateColumn({
     name: 'deleted_at',
-    type: 'timestamp',
+    type: 'datetime',
+    transformer: DatetimeTransformer,
     nullable: true,
   })
-  deletedAt: Date;
+  deletedAt?: Dayjs;
 }

@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { LogLevel } from '@nestjs/common/services/logger.service';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -23,7 +24,7 @@ async function bootstrap() {
   });
   await app.listen(appConfig.port);
 
-  console.log(`SJDiary Server Start. Port: ${appConfig.port}`);
+  Logger.log(`SJDiary Server Start. Port: ${appConfig.port}`);
 }
 
 bootstrap();

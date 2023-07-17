@@ -13,7 +13,7 @@ services:
       - mysql
     volumes:
       - .:/app
-      - /app/node_modules
+      - mono-node_modules:/app/node_modules
     networks:
       - network-front
       - network-back
@@ -33,7 +33,7 @@ services:
       - network-front
     volumes:
       - .:/app
-      - /app/node_modules
+      - mono-node_modules:/app/node_modules
     command: npm run serve:front
 
   # Database - Mysql
@@ -55,3 +55,6 @@ networks:
     driver: bridge
   network-back:
     driver: bridge
+
+volumes:
+  mono-node_modules: null
